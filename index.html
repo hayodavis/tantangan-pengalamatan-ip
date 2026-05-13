@@ -59,7 +59,7 @@
         .finger-icon { font-size: 4rem; margin-bottom: 15px; animation: bounce 1.5s infinite; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* Sidebar Kiri - Diperkecil agar FIT */
+        /* Sidebar Kiri */
         .sidebar { width: 360px; background: var(--bg-panel); border-right: 2px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
         .sidebar h1 { font-size: 1.7rem; color: var(--primary); margin-bottom: 10px; font-weight: 800; line-height: 1.2; }
         
@@ -132,8 +132,12 @@
         .shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
 
-        .cert-box { background: white; padding: 40px; border-radius: 20px; border: 4px solid var(--warning); max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden; width: 100%;}
-        .cert-box::before { content: '🏆'; position: absolute; font-size: 12rem; opacity: 0.05; top: -20px; right: -20px; }
+        /* Sertifikat Dinamis */
+        .cert-box { background: white; padding: 40px; border-radius: 20px; border: 4px solid var(--primary); max-width: 650px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden; width: 100%; text-align: center;}
+        .cert-box::before { content: '🏆'; position: absolute; font-size: 15rem; opacity: 0.05; top: -30px; right: -20px; pointer-events: none;}
+        
+        .eval-box { background: var(--bg-body); padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 6px solid var(--border); text-align: left; }
+        .eval-title { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text-main); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;}
     </style>
 </head>
 <body>
@@ -238,12 +242,20 @@
         </div>
 
         <div id="scr-result" class="screen">
-            <div class="cert-box">
-                <h3 style="color: var(--text-muted); font-size: 1.1rem; text-transform: uppercase; margin-bottom: 10px;">Sertifikat Kompetensi Simulator</h3>
-                <h1 id="cert-name" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; font-family: serif;">Nama Siswa</h1>
-                <p style="font-size: 1.3rem; color: var(--text-main); font-weight: bold;">Skor Evaluasi: <span id="cert-score" style="color: var(--success);">250</span> Point</p>
-                <hr style="border: 1px solid var(--border); margin: 15px 0;">
-                <p style="font-size: 1rem; color: var(--text-muted);">Telah berhasil menyelesaikan Tantangan Pengalamatan IP Arsitek Jaringan sesuai dengan kriteria efisiensi standar industri.</p>
+            <div class="cert-box" id="final-cert-box">
+                <h3 style="color: var(--text-muted); font-size: 1.1rem; text-transform: uppercase; margin-bottom: 5px;">Sertifikat Kompetensi Simulator</h3>
+                <h1 id="cert-name" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 5px; font-family: serif;">Nama Siswa</h1>
+                
+                <p style="font-size: 1.3rem; color: var(--text-main); font-weight: bold; margin-bottom: 10px;">
+                    Skor Akhir: <span id="cert-score" style="font-size: 2.2rem; margin: 0 10px;">100</span> / 100
+                </p>
+                
+                <div class="eval-box" id="eval-box">
+                    <span class="eval-title">Catatan Evaluasi Instruktur:</span>
+                    <span id="cert-eval-text" style="font-size: 1.05rem; line-height: 1.5; color: var(--text-main);">Memuat evaluasi...</span>
+                </div>
+                
+                <p style="font-size: 1rem; color: var(--text-muted);">Simulator telah mencatat keseluruhan respon analisa Anda terhadap perancangan Arsitektur Jaringan (Subnetting & Gateway).</p>
             </div>
             <button class="btn" style="max-width: 400px; margin-top: 20px;" onclick="location.reload()">Selesai & Keluar</button>
         </div>
@@ -362,7 +374,6 @@
             if (!this.isMuted) {
                 this.stopAllNarration(); 
                 audioObj.play().catch(e => {
-                    console.log("File audio fisik tidak ditemukan. Memutar beep sistem...");
                     if(fallbackType) this.playFallbackBeep(fallbackType);
                 });
             }
@@ -404,7 +415,7 @@
 
         timeOut() {
             clearInterval(this.timerInterval);
-            this.isAnimating = true; // Kunci layar agar pengguna tidak bisa mengklik apa pun
+            this.isAnimating = true; 
             this.playAudioSafely(audio.timeout, 'timeout'); 
             
             const panel = document.getElementById('target-panel');
@@ -412,20 +423,15 @@
             
             const fb = document.getElementById('feedback-msg');
             fb.style.display = 'block';
-            fb.innerText = "⏰ Waktu Habis! Misi dilewati (-10 Poin).";
+            fb.innerText = "⏰ Waktu Habis! Misi dilewati (0 Poin).";
             fb.style.color = "var(--danger)";
             
-            if(this.score >= 10) this.score -= 10;
-            else this.score = 0;
-            document.getElementById('txt-score').innerText = this.score;
+            // Timeout tidak mengurangi poin, tapi siswa kehilangan kesempatan mendapat 20 poin di misi tersebut
             
-            // Hentikan efek getaran panel setelah 2 detik
             setTimeout(() => { 
                 panel.classList.remove('shake'); 
             }, 2000);
 
-            // Tunggu 12 detik agar narasi audio punya waktu untuk selesai
-            // Baru setelah itu lompat ke misi berikutnya
             setTimeout(() => {
                 this.isAnimating = false;
                 this.nextMission(); 
@@ -452,6 +458,7 @@
                 }
                 alertMsg.style.display = 'none';
                 this.playerName = inputName;
+                this.score = 0; // Pastikan skor mulai dari 0
             }
 
             this.isGameStarted = true;
@@ -529,10 +536,10 @@
                 panel.className = "config-panel solved";
                 document.getElementById('line-1').classList.add('active-line');
                 
-                const timeBonus = this.timeLeft;
-                this.score += (50 + timeBonus); 
+                // SKALA 100: Misi sukses = +20 poin
+                this.score += 20; 
                 
-                fb.innerText = `✅ Tepat! +50 Poin (Bonus Waktu: +${timeBonus})`;
+                fb.innerText = `✅ Jawaban Tepat! (+20 Poin)`;
                 fb.style.color = "var(--success)";
                 document.getElementById('txt-score').innerText = this.score;
                 document.getElementById('btn-next').style.display = 'block';
@@ -543,8 +550,8 @@
                 else fb.innerText = "❌ Gateway salah. Gunakan IP Pertama!";
                 fb.style.color = "var(--danger)";
                 
-                if(this.score >= 10) this.score -= 10;
-                else this.score = 0;
+                // SKALA 100: Kesalahan menebak = Penalti -5 Poin (Batas Bawah 0)
+                this.score = Math.max(0, this.score - 5);
                 document.getElementById('txt-score').innerText = this.score;
                 
                 setTimeout(() => { 
@@ -575,7 +582,34 @@
                 document.getElementById('sidebar-play').style.display = 'none';
                 
                 document.getElementById('cert-name').innerText = this.playerName;
-                document.getElementById('cert-score').innerText = this.score;
+                
+                const finalScoreDisplay = document.getElementById('cert-score');
+                finalScoreDisplay.innerText = this.score;
+                
+                const evalBox = document.getElementById('eval-box');
+                const evalText = document.getElementById('cert-eval-text');
+                const certContainer = document.getElementById('final-cert-box');
+
+                // LOGIKA EVALUASI DINAMIS BERDASARKAN SKOR 0-100
+                if(this.score >= 85) {
+                    certContainer.style.borderColor = "var(--success)";
+                    evalBox.style.borderLeftColor = "var(--success)";
+                    evalBox.style.backgroundColor = "var(--success-light)";
+                    finalScoreDisplay.style.color = "var(--success)";
+                    evalText.innerHTML = "<strong>Sangat Baik (A).</strong><br>Pemahaman Subnetting/VLSM dan penentuan Gateway Anda sangat solid. Anda mampu merancang arsitektur jaringan secara terukur dan efisien tanpa membuang alokasi IP secara percuma.";
+                } else if(this.score >= 60) {
+                    certContainer.style.borderColor = "var(--warning)";
+                    evalBox.style.borderLeftColor = "var(--warning)";
+                    evalBox.style.backgroundColor = "var(--warning-light)";
+                    finalScoreDisplay.style.color = "var(--warning)";
+                    evalText.innerHTML = "<strong>Kompeten (B).</strong><br>Secara umum Anda telah memahami konsep pengalamatan IP, namun masih terdapat keraguan atau beberapa keputusan yang keliru. Tingkatkan lagi kecepatan dan ketelitian analisa Anda.";
+                } else {
+                    certContainer.style.borderColor = "var(--danger)";
+                    evalBox.style.borderLeftColor = "var(--danger)";
+                    evalBox.style.backgroundColor = "var(--danger-light)";
+                    finalScoreDisplay.style.color = "var(--danger)";
+                    evalText.innerHTML = "<strong>Perlu Evaluasi (C).</strong><br>Anda masih sering tertukar dalam menentukan ukuran blok IP (Prefix) yang efisien dan masih keliru dalam menetapkan IP Gateway. Disarankan untuk banyak berlatih dan membaca ulang Buku Saku VLSM.";
+                }
                 
                 this.showScreen('scr-result');
                 this.playAudioSafely(audio.success, 'success');
