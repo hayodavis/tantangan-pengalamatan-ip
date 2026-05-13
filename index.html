@@ -88,7 +88,6 @@
 <body>
 
 <div id="ifp-container">
-
     <div id="scr-unlock" onclick="game.unlockAudio()">
         <div style="font-size: 6rem; margin-bottom: 20px; animation: fadeIn 1s infinite alternate;">👆</div>
         <h1 style="font-size: 4rem; margin-bottom: 10px;">Sentuh Layar Untuk Memulai</h1>
@@ -124,11 +123,10 @@
     </div>
 
     <div class="workspace">
-        
         <div id="scr-intro" class="screen" style="justify-content: center; text-align: center;">
             <div class="device-icon" style="margin: 0 auto 30px; border:none; background-image: url('assets/img/router.png');">🖧</div>
             <h1 style="font-size: 3rem; margin-bottom: 20px;">Selamat Datang!</h1>
-            <p style="font-size: 1.5rem; color: var(--text-muted); max-width: 800px; margin: 0 auto;">Simulator ini akan memandu Anda merancang jaringan luring yang efisien untuk menunjang aktivitas belajar mengajar.</p>
+            <p style="font-size: 1.5rem; color: var(--text-muted); max-width: 800px; margin: 0 auto;">Selesaikan 5 misi infrastruktur jaringan. Buktikan Anda adalah administrator yang handal!</p>
         </div>
 
         <div id="scr-learn" class="screen">
@@ -140,6 +138,7 @@
                     <tr><td>/26</td><td>.192</td><td>62 Host</td></tr>
                     <tr><td>/27</td><td>.224</td><td>30 Host</td></tr>
                     <tr><td>/28</td><td>.240</td><td>14 Host</td></tr>
+                    <tr><td>/29</td><td>.248</td><td>6 Host</td></tr>
                     <tr><td>/30</td><td>.252</td><td>2 Host (Point-to-Point)</td></tr>
                 </table>
                 <div style="background: var(--warning-light); padding: 20px; border-radius: 12px; margin-top: 20px; font-size: 1.2rem;">
@@ -177,9 +176,10 @@
         </div>
 
         <div id="scr-result" class="screen" style="justify-content: center; text-align: center;">
-            <h1 style="font-size: 4rem; color: var(--success); margin-bottom: 20px;">Misi Selesai!</h1>
-            <p style="font-size: 1.8rem; color: var(--text-muted);">Infrastruktur jaringan sekolah kini berjalan dengan efisien.</p>
-            <button class="btn" style="max-width: 400px; margin: 40px auto 0;" onclick="location.reload()">Selesai</button>
+            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
+            <h1 style="font-size: 4rem; color: var(--success); margin-bottom: 20px;">Sertifikasi Lulus!</h1>
+            <p style="font-size: 1.8rem; color: var(--text-muted);">Luar biasa! 5 Zona jaringan sekolah kini berjalan dengan sangat efisien tanpa konflik IP.</p>
+            <button class="btn" style="max-width: 400px; margin: 40px auto 0;" onclick="location.reload()">Mainkan Ulang</button>
         </div>
     </div>
 </div>
@@ -191,15 +191,21 @@
         error: new Audio('assets/audio/error.mp3'),
         intro: new Audio('assets/audio/intro.mp3'),
         misi1: new Audio('assets/audio/misi1.mp3'),
-        misi2: new Audio('assets/audio/misi2.mp3')
+        misi2: new Audio('assets/audio/misi2.mp3'),
+        misi3: new Audio('assets/audio/misi3.mp3'), // Pastikan generate file ini
+        misi4: new Audio('assets/audio/misi4.mp3'), // Pastikan generate file ini
+        misi5: new Audio('assets/audio/misi5.mp3')  // Pastikan generate file ini
     };
 
     const game = {
-        score: 0, lvl: 0, activeSlot: 'cidr', answers: {cidr: null, ip: null}, isMuted: false, isGameStarted: false,
+        score: 0, lvl: 0, activeSlot: 'cidr', answers: {cidr: null, ip: null}, 
+        isMuted: false, isGameStarted: false, 
+        isAnimating: false, // <-- SOLUSI BUG: Pengunci interaksi saat animasi eror
+
         missions: [
             {
                 title: "Misi 1: Rak Server Startup",
-                desc: "Alokasikan IP efisien untuk 12 unit server fisik baru agar layanan aplikasi berjalan stabil.",
+                desc: "Alokasikan IP efisien untuk 12 unit server fisik baru agar layanan aplikasi sekolah berjalan stabil.",
                 net: "10.0.0.0", name: "Server Farm", needs: "Target: 12 Host", 
                 imgFile: "server.png", fallbackIcon: "🗄️",
                 correct: {cidr: "/28", ip: "10.0.0.1"},
@@ -212,22 +218,38 @@
                 imgFile: "lab.png", fallbackIcon: "💻",
                 correct: {cidr: "/26", ip: "192.168.10.1"},
                 optsCidr: ["/25", "/26", "/27", "/28"], optsIp: ["192.168.10.1", "192.168.10.63", "192.168.10.254", "192.168.10.64"]
+            },
+            {
+                title: "Misi 3: Lab IoT & Robotika",
+                desc: "Proyek mikrokontroler dan sensor ESP32 membutuhkan blok IP independen untuk menghindari bentrok dengan lab komputer utama.",
+                net: "172.16.20.0", name: "Zona IoT Bolobot", needs: "Target: 28 Host", 
+                imgFile: "switch.png", fallbackIcon: "🤖",
+                correct: {cidr: "/27", ip: "172.16.20.1"},
+                optsCidr: ["/26", "/27", "/28", "/29"], optsIp: ["172.16.20.1", "172.16.20.254", "172.16.20.30", "172.16.20.0"]
+            },
+            {
+                title: "Misi 4: Liga E-Sports",
+                desc: "Turnamen Markas Konami berubah format menjadi liga. Siapkan jaringan stabil untuk 14 tim dan panitia sekaligus.",
+                net: "192.168.100.0", name: "Arena Kompetisi", needs: "Target: 120 Host", 
+                imgFile: "server.png", fallbackIcon: "🎮",
+                correct: {cidr: "/25", ip: "192.168.100.1"},
+                optsCidr: ["/24", "/25", "/26", "/27"], optsIp: ["192.168.100.1", "192.168.100.126", "192.168.100.254", "192.168.100.128"]
+            },
+            {
+                title: "Misi 5: Backbone Intranet SMKN",
+                desc: "Hubungkan lalu lintas data antar gedung sekolah secara efisien. Kebutuhan IP sangat minim hanya untuk komunikasi Router ke Router.",
+                net: "10.10.10.0", name: "Jalur Antar Gedung", needs: "Target: 2 Host", 
+                imgFile: "router.png", fallbackIcon: "📡",
+                correct: {cidr: "/30", ip: "10.10.10.1"},
+                optsCidr: ["/28", "/29", "/30", "/31"], optsIp: ["10.10.10.1", "10.10.10.2", "10.10.10.254", "10.10.10.0"]
             }
         ],
 
         unlockAudio() {
             Object.values(audio).forEach(a => {
-                a.volume = 0;
-                a.play().catch(e=>{});
-                a.pause();
-                a.currentTime = 0;
-                a.volume = 1;
+                a.volume = 0; a.play().catch(e=>{}); a.pause(); a.currentTime = 0; a.volume = 1;
             });
-            
-            audio.bgm.volume = 0.35;
-            audio.bgm.loop = true;
-            audio.bgm.play().catch(e=>{});
-
+            audio.bgm.volume = 0.35; audio.bgm.loop = true; audio.bgm.play().catch(e=>{});
             document.getElementById('scr-unlock').style.display = 'none';
             this.showScreen('scr-intro');
         },
@@ -238,22 +260,18 @@
             btn.innerHTML = this.isMuted ? '🔇 Suara Mati' : '🔊 Suara Menyala';
             btn.style.borderColor = this.isMuted ? 'var(--danger)' : 'var(--border)';
             btn.style.color = this.isMuted ? 'var(--danger)' : 'var(--text-main)';
-            
             Object.values(audio).forEach(a => a.muted = this.isMuted);
         },
 
         stopAllNarration() {
-            const narrations = [audio.intro, audio.misi1, audio.misi2, audio.success, audio.error];
-            narrations.forEach(a => {
-                a.pause();
-                a.currentTime = 0;
-            });
+            const narrations = [audio.intro, audio.misi1, audio.misi2, audio.misi3, audio.misi4, audio.misi5, audio.success, audio.error];
+            narrations.forEach(a => { a.pause(); a.currentTime = 0; });
         },
 
         playAudioSafely(audioObj) {
             if (!this.isMuted) {
                 this.stopAllNarration(); 
-                audioObj.play().catch(e => console.log("Menunggu interaksi pengguna"));
+                audioObj.play().catch(e => console.log("Audio terhenti"));
             }
         },
 
@@ -262,9 +280,7 @@
             document.getElementById(id).classList.add('active');
             
             if(id === 'scr-intro') this.playAudioSafely(audio.intro);
-            if(id === 'scr-learn' && !this.isGameStarted) {
-                this.stopAllNarration();
-            }
+            if(id === 'scr-learn' && !this.isGameStarted) this.stopAllNarration();
         },
 
         initMission(idx) {
@@ -284,13 +300,14 @@
             targetImg.innerText = m.fallbackIcon; 
             
             this.answers = {cidr: null, ip: null};
+            this.isAnimating = false; // Buka gembok animasi saat misi baru dimulai
             this.resetUI();
             this.renderInv('cidr', m.optsCidr);
             this.renderInv('ip', m.optsIp);
             this.showScreen('scr-play');
             
-            if(idx === 0) this.playAudioSafely(audio.misi1);
-            else if(idx === 1) this.playAudioSafely(audio.misi2);
+            const missionAudio = audio['misi' + (idx + 1)];
+            if(missionAudio) this.playAudioSafely(missionAudio);
         },
 
         renderInv(type, arr) {
@@ -312,7 +329,9 @@
         },
 
         selectAnswer(type, val, el) {
-            if(this.activeSlot !== type) return;
+            // BUG FIX: Blokir klik jika salah slot ATAU sedang animasi merah (eror)
+            if(this.activeSlot !== type || this.isAnimating) return;
+            
             this.answers[type] = val;
             document.querySelectorAll(`.pill[data-type="${type}"]`).forEach(p => p.classList.remove('used'));
             el.classList.add('used');
@@ -324,6 +343,7 @@
         },
 
         verify() {
+            this.isAnimating = true; // Kunci layar
             const m = this.missions[this.lvl];
             const panel = document.getElementById('target-panel');
             const fb = document.getElementById('feedback-msg');
@@ -338,20 +358,24 @@
                 this.score += 50;
                 document.getElementById('txt-score').innerText = this.score;
                 document.getElementById('btn-next').style.display = 'block';
+                // Animasi sukses, klik berikutnya lewat tombol Lanjut
             } else {
                 this.playAudioSafely(audio.error);
                 panel.classList.add('shake');
                 if(this.answers.cidr !== m.correct.cidr) fb.innerText = "❌ Prefix kurang efisien. Cek kapasitas di Modul!";
                 else fb.innerText = "❌ Gateway salah. Gunakan IP Usable Pertama!";
                 fb.style.color = "var(--danger)";
-                setTimeout(() => { panel.classList.remove('shake'); this.resetUI(); }, 2000);
+                
+                setTimeout(() => { 
+                    panel.classList.remove('shake'); 
+                    this.resetUI(); 
+                    this.isAnimating = false; // Buka kunci layar kembali setelah UI bersih
+                }, 2000);
             }
         },
 
         resetUI() {
-            // PERBAIKAN BUG: Membersihkan memori jawaban
             this.answers = {cidr: null, ip: null}; 
-            
             document.getElementById('slot-cidr').innerText = "1. Pilih Prefix (CIDR)";
             document.getElementById('slot-ip').innerText = "2. Pilih IP Gateway";
             document.querySelectorAll('.config-slot').forEach(s => s.classList.remove('filled'));
@@ -366,8 +390,7 @@
             if(this.lvl + 1 < this.missions.length) {
                 document.getElementById('btn-next').style.display = 'none';
                 this.initMission(this.lvl + 1);
-            }
-            else {
+            } else {
                 document.getElementById('sidebar-play').style.display = 'none';
                 this.showScreen('scr-result');
                 this.playAudioSafely(audio.success);
