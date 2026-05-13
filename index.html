@@ -19,13 +19,34 @@
 
         #ifp-container { width: 100%; max-width: 1700px; height: 95vh; background: var(--bg-panel); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); display: flex; overflow: hidden; position: relative; }
 
+        /* Layar Pembuka Mode "Blueprint Siber" */
         #scr-unlock {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--primary); color: white; z-index: 999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.3s;
+            background-color: #0f172a;
+            background-image: 
+                linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: white; z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.5s ease-out;
+        }
+        
+        .unlock-box {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 50px 80px; border-radius: 24px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 40px rgba(2, 132, 199, 0.4);
+            text-align: center; backdrop-filter: blur(10px);
+            animation: pulseGlow 2s infinite alternate;
         }
 
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(2, 132, 199, 0.2); }
+            100% { box-shadow: 0 0 50px rgba(2, 132, 199, 0.6); transform: scale(1.02);}
+        }
+
+        /* Sidebar Kiri */
         .sidebar { width: 420px; background: var(--bg-panel); border-right: 2px solid var(--border); padding: 40px; display: flex; flex-direction: column; }
         .sidebar h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
         .info-box { background: var(--bg-body); padding: 20px; border-radius: 16px; margin-bottom: 20px; border-left: 6px solid var(--primary); }
@@ -41,16 +62,23 @@
         .audio-toggle { margin-top: auto; background: var(--bg-body); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px solid var(--border); transition: 0.2s; font-size: 1.1rem;}
         .audio-toggle:active { transform: scale(0.95); }
 
+        /* Workspace Kanan */
         .workspace { flex: 1; display: flex; flex-direction: column; background: var(--bg-workspace); position: relative; }
         .screen { display: none; width: 100%; height: 100%; padding: 40px; flex-direction: column; animation: fadeIn 0.4s ease; overflow-y: auto;}
         .active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Layar Modul Belajar */
         .learn-container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; }
         .learn-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 1.1rem; text-align: center;}
         .learn-table th, .learn-table td { border: 1px solid var(--border); padding: 12px; }
         .learn-table th { background: var(--primary); color: white; }
 
+        /* Kotak Input Nama */
+        .player-input { width: 100%; max-width: 400px; padding: 20px; font-size: 1.5rem; text-align: center; border: 3px solid var(--border); border-radius: 15px; margin: 20px auto; display: block; outline: none; transition: 0.3s; color: var(--text-main); font-weight: bold;}
+        .player-input:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-light); }
+
+        /* Topologi Area */
         .topology-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
         .device-node { display: flex; flex-direction: column; align-items: center; margin: 0 40px; z-index: 2; text-align: center;}
         
@@ -83,15 +111,22 @@
 
         .shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
+
+        /* Sertifikat Kelulusan */
+        .cert-box { background: white; padding: 40px; border-radius: 20px; border: 4px solid var(--warning); margin: 20px auto; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden;}
+        .cert-box::before { content: '🏆'; position: absolute; font-size: 15rem; opacity: 0.05; top: -30px; right: -20px; }
     </style>
 </head>
 <body>
 
 <div id="ifp-container">
+
     <div id="scr-unlock" onclick="game.unlockAudio()">
-        <div style="font-size: 6rem; margin-bottom: 20px; animation: fadeIn 1s infinite alternate;">👆</div>
-        <h1 style="font-size: 4rem; margin-bottom: 10px;">Sentuh Layar Untuk Memulai</h1>
-        <p style="font-size: 1.5rem; opacity: 0.9;">Tindakan ini akan mengaktifkan modul suara interaktif.</p>
+        <div class="unlock-box">
+            <h2 style="color: #94a3b8; letter-spacing: 3px; margin-bottom: 15px; font-size: 1.2rem; text-transform: uppercase;">Simulator Jaringan v2.0</h2>
+            <h1 style="font-size: 4rem; margin-bottom: 20px; color: #38bdf8;">SISTEM SIAP</h1>
+            <p style="font-size: 1.5rem; opacity: 0.9;">Sentuh layar untuk menginisialisasi modul audio dan memulai sesi.</p>
+        </div>
     </div>
 
     <div class="sidebar">
@@ -99,11 +134,12 @@
         
         <div id="sidebar-intro">
             <div class="info-box">
-                <h3>Mode Belajar & Bermain</h3>
-                <p>Pahami tabel VLSM dan IP Gateway sebelum merancang infrastruktur digital sekolah.</p>
+                <h3>Instruksi Awal</h3>
+                <p>Silakan isi nama Anda di layar utama, lalu pelajari Buku Saku VLSM sebelum memulai perancangan.</p>
             </div>
             <button class="btn btn-outline" onclick="game.showScreen('scr-learn')">Buka Modul Belajar</button>
             <button class="btn" onclick="game.initMission(0)" style="margin-top: 30px;">Mulai Misi Praktik</button>
+            <p id="alert-name" style="color: var(--danger); font-weight: bold; margin-top: 10px; display: none; text-align: center;">⚠️ Nama wajib diisi!</p>
         </div>
 
         <div id="sidebar-play" style="display: none;">
@@ -123,10 +159,13 @@
     </div>
 
     <div class="workspace">
+        
         <div id="scr-intro" class="screen" style="justify-content: center; text-align: center;">
-            <div class="device-icon" style="margin: 0 auto 30px; border:none; background-image: url('assets/img/router.png');">🖧</div>
-            <h1 style="font-size: 3rem; margin-bottom: 20px;">Selamat Datang!</h1>
-            <p style="font-size: 1.5rem; color: var(--text-muted); max-width: 800px; margin: 0 auto;">Selesaikan 5 misi infrastruktur jaringan. Buktikan Anda adalah administrator yang handal!</p>
+            <div class="device-icon" style="margin: 0 auto 20px; border:none; background-image: url('assets/img/router.png');">🖧</div>
+            <h1 style="font-size: 2.8rem; margin-bottom: 10px;">Selamat Datang, Arsitek!</h1>
+            <p style="font-size: 1.4rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 30px;">Selesaikan 5 misi infrastruktur jaringan. Harap masukkan identitas Anda untuk penerbitan sertifikat evaluasi.</p>
+            
+            <input type="text" id="input-player-name" class="player-input" placeholder="Ketik Nama Lengkap Anda..." autocomplete="off">
         </div>
 
         <div id="scr-learn" class="screen">
@@ -176,10 +215,14 @@
         </div>
 
         <div id="scr-result" class="screen" style="justify-content: center; text-align: center;">
-            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
-            <h1 style="font-size: 4rem; color: var(--success); margin-bottom: 20px;">Sertifikasi Lulus!</h1>
-            <p style="font-size: 1.8rem; color: var(--text-muted);">Luar biasa! 5 Zona jaringan sekolah kini berjalan dengan sangat efisien tanpa konflik IP.</p>
-            <button class="btn" style="max-width: 400px; margin: 40px auto 0;" onclick="location.reload()">Mainkan Ulang</button>
+            <div class="cert-box">
+                <h3 style="color: var(--text-muted); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 10px;">Sertifikat Kompetensi Simulator</h3>
+                <h1 id="cert-name" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px; font-family: serif;">Nama Siswa</h1>
+                <p style="font-size: 1.4rem; color: var(--text-main); font-weight: bold;">Skor Evaluasi: <span id="cert-score" style="color: var(--success);">250</span></p>
+                <hr style="border: 1px solid var(--border); margin: 20px 0;">
+                <p style="font-size: 1.1rem; color: var(--text-muted);">Telah berhasil mengonfigurasi 5 Zona Jaringan (VLSM & Gateway) tanpa indikasi pemborosan IP.</p>
+            </div>
+            <button class="btn" style="max-width: 400px; margin: 20px auto 0;" onclick="location.reload()">Selesai & Mainkan Ulang</button>
         </div>
     </div>
 </div>
@@ -192,15 +235,15 @@
         intro: new Audio('assets/audio/intro.mp3'),
         misi1: new Audio('assets/audio/misi1.mp3'),
         misi2: new Audio('assets/audio/misi2.mp3'),
-        misi3: new Audio('assets/audio/misi3.mp3'), // Pastikan generate file ini
-        misi4: new Audio('assets/audio/misi4.mp3'), // Pastikan generate file ini
-        misi5: new Audio('assets/audio/misi5.mp3')  // Pastikan generate file ini
+        misi3: new Audio('assets/audio/misi3.mp3'),
+        misi4: new Audio('assets/audio/misi4.mp3'),
+        misi5: new Audio('assets/audio/misi5.mp3')
     };
 
     const game = {
         score: 0, lvl: 0, activeSlot: 'cidr', answers: {cidr: null, ip: null}, 
-        isMuted: false, isGameStarted: false, 
-        isAnimating: false, // <-- SOLUSI BUG: Pengunci interaksi saat animasi eror
+        isMuted: false, isGameStarted: false, isAnimating: false,
+        playerName: "Anonim", // Variabel penyimpan nama
 
         missions: [
             {
@@ -284,6 +327,19 @@
         },
 
         initMission(idx) {
+            // Validasi Nama Sebelum Memulai Misi 1
+            if(idx === 0) {
+                const inputName = document.getElementById('input-player-name').value.trim();
+                const alertMsg = document.getElementById('alert-name');
+                if(!inputName) {
+                    alertMsg.style.display = 'block';
+                    document.getElementById('input-player-name').focus();
+                    return; // Hentikan proses jika nama kosong
+                }
+                alertMsg.style.display = 'none';
+                this.playerName = inputName;
+            }
+
             this.isGameStarted = true;
             this.lvl = idx;
             const m = this.missions[idx];
@@ -300,7 +356,7 @@
             targetImg.innerText = m.fallbackIcon; 
             
             this.answers = {cidr: null, ip: null};
-            this.isAnimating = false; // Buka gembok animasi saat misi baru dimulai
+            this.isAnimating = false;
             this.resetUI();
             this.renderInv('cidr', m.optsCidr);
             this.renderInv('ip', m.optsIp);
@@ -329,7 +385,6 @@
         },
 
         selectAnswer(type, val, el) {
-            // BUG FIX: Blokir klik jika salah slot ATAU sedang animasi merah (eror)
             if(this.activeSlot !== type || this.isAnimating) return;
             
             this.answers[type] = val;
@@ -343,7 +398,7 @@
         },
 
         verify() {
-            this.isAnimating = true; // Kunci layar
+            this.isAnimating = true;
             const m = this.missions[this.lvl];
             const panel = document.getElementById('target-panel');
             const fb = document.getElementById('feedback-msg');
@@ -358,7 +413,6 @@
                 this.score += 50;
                 document.getElementById('txt-score').innerText = this.score;
                 document.getElementById('btn-next').style.display = 'block';
-                // Animasi sukses, klik berikutnya lewat tombol Lanjut
             } else {
                 this.playAudioSafely(audio.error);
                 panel.classList.add('shake');
@@ -369,7 +423,7 @@
                 setTimeout(() => { 
                     panel.classList.remove('shake'); 
                     this.resetUI(); 
-                    this.isAnimating = false; // Buka kunci layar kembali setelah UI bersih
+                    this.isAnimating = false;
                 }, 2000);
             }
         },
@@ -392,12 +446,24 @@
                 this.initMission(this.lvl + 1);
             } else {
                 document.getElementById('sidebar-play').style.display = 'none';
+                
+                // Set Data Sertifikat
+                document.getElementById('cert-name').innerText = this.playerName;
+                document.getElementById('cert-score').innerText = this.score;
+                
                 this.showScreen('scr-result');
                 this.playAudioSafely(audio.success);
             }
         },
 
-        backToGame() { this.showScreen('scr-play'); }
+        backToGame() {
+            // Jika game belum dimulai, kembali ke intro (tempat input nama berada)
+            if(!this.isGameStarted) {
+                this.showScreen('scr-intro');
+            } else {
+                this.showScreen('scr-play');
+            }
+        }
     };
 </script>
 </body>
